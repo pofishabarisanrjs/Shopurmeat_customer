@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "839958938726",
+    "project_id": "shopurmeatapp",
+    "storage_bucket": "shopurmeatapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:839958938726:android:62c7799965c93c552d19a7",
+        "android_client_info": {
+          "package_name": "com.shopurmeatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "839958938726-476fdm6ua9d21j0dar62r3hrpjcja34s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shopurmeatapp",
+            "certificate_hash": "5213f21988ddbf15200775a9667a308b0440404a"
+          }
+        },
+        {
+          "client_id": "839958938726-0gb88tvl02or474iuou61e4qerbe0isp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCL6b9NDyOnmFSkpOYv_4DRihO520nPFQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "839958938726-0gb88tvl02or474iuou61e4qerbe0isp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
