@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {AuthContext} from '../../../AuthContext';
 import LottieView from 'lottie-react-native';
 import { domainUrl } from '../../constants/Constants';
+import FacebookLogin from './FaceBookLogin';
 const LoginScreen = ({navigation,route}) => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
@@ -134,6 +135,7 @@ const LoginScreen = ({navigation,route}) => {
             
               </View>
               </TouchableOpacity>
+              <FacebookLogin/>
           </View>
             <View style={styles.body}>
             <View style={styles.sectionContainer}>

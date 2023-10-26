@@ -22,7 +22,23 @@
           }
         },
         {
-          "client_id": "839958938726-0gb88tvl02or474iuou61e4qerbe0isp.apps.googleusercontent.com",
+          "client_id": "839958938726-lgu2t4guq9icbnj6jc18rvlo1u439lth.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shopurmeatapp",
+            "certificate_hash": "582c65131004b798acc5a066b2caacfe85864572"
+          }
+        },
+        {
+          "client_id": "839958938726-mb0otnlsgsd7t2faldtftit62dpvi4ha.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shopurmeatapp",
+            "certificate_hash": "8fc8d560d6063da7cb2d0c39cfdb3bda19b833e4"
+          }
+        },
+        {
+          "client_id": "839958938726-eac3hpk5gpvjc83goc28tn0us1d5j1ha.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

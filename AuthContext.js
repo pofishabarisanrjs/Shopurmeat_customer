@@ -107,6 +107,82 @@ export const AuthProvider = ({children,props}) => {
       });
   };
 
+  const mobilelogin = (phone, password) => {
+console.log(`${baseUrl}/v1/login-phone`,{
+  phone,
+  password,
+})
+    axios
+      .post(`${baseUrl}/v1/login-phone`, {
+        phone,
+        password,
+      })
+      .then(res => {
+console.log(JSON.stringify(res.data),"response data -------->")
+if(res?.data?.success)
+{
+  
+        let userInfo = res.data;
+        setUserInfo(userInfo.data);
+        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+}
+else{
+  alert(res?.data?.message);
+}
+        // let userInfo = res.data;
+        // setUserInfo(userInfo.data);
+        // AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+        // setIsLoading(false);
+        // if(userInfo.data == 'DONOTMATCH'){
+        // return alert ('Phone number and Password mismatch')}
+       
+        // if (errorms == 'hello')
+        // return alert ('hello')
+        // alert(userInfo.data);
+      })
+      
+      .catch(e => {
+        alert(`login error ${e}`);
+        setIsLoading(false);
+      });
+  };
+  const MobileWithOTPScreen = (phone, cb) => {
+    setIsLoading(true);
+console.log(`${baseUrl}/v1/login-phone`,{
+  phone,
+})
+    axios
+      .post(`${baseUrl}/v1/login-phone`, {
+        phone
+      })
+      .then(res => {
+console.log(JSON.stringify(res.data),"response data -------->")
+if(res?.data?.success)
+{
+  setIsLoading(false);
+        cb(res?.data)
+}
+else{
+  setIsLoading(false);
+  alert(res?.data?.message);
+}
+        // let userInfo = res.data;
+        // setUserInfo(userInfo.data);
+        // AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+        // setIsLoading(false);
+        // if(userInfo.data == 'DONOTMATCH'){
+        // return alert ('Phone number and Password mismatch')}
+       
+        // if (errorms == 'hello')
+        // return alert ('hello')
+        // alert(userInfo.data);
+      })
+      
+      .catch(e => {
+        alert(`login error ${e}`);
+        setIsLoading(false);
+      });
+  };
 
   const DefaultAddress = (address_id,userdata) => {
     setIsLoading(true);
@@ -189,6 +265,51 @@ console.log(userdata?.id)
     }
   }
 };
+
+const facebooklogin = (currentUser,phone = '') => {
+
+console.log(currentUser)
+    setIsLoading(true);
+const id = currentUser.accessToken
+const email = currentUser.result.email
+const name = currentUser.result.name
+const provider = 'facebook'
+const verify_type = 'id_token'
+  
+
+axios
+.post(`${baseUrl}/login?accessToken=${id}&email=${email}&name=${name}&provider=${provider}&verify_type=${verify_type}&phone=${phone}`, {
+phone
+})
+.then(res => {
+  console.log('response of socila',res)
+  let userInfo = res.data;
+  // console.log("hel",userInfo)
+  if (userInfo.enter_phone_after_social_login == true )
+  return toggleOverlay (isvisible)
+  if(userInfo.email_phone_already_used !== true)
+  {
+  setUserInfo(userInfo.data);
+  AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+  setIsLoading(false);
+  }
+  else
+  {
+    setIsLoading(false);
+toggleOverlay (false)
+setphonematcherror (' Mobile Number already exist')
+alert(' Mobile Number already exist')
+  }
+})
+
+.catch(e => {
+  alert(`login error ${e}`);
+  setIsLoading(false);
+});
+}; 
+
+
+
 useEffect(()=>{
   GoogleSignin.configure({
     scopes:['email'],
@@ -299,6 +420,40 @@ const verify_type = 'id_token'
       });
   };
 
+ const verifyotpAPI = async(data)=>
+{
+    const url=`${baseUrl}/v1/verify-otp`
+    const postformData={
+        phone:data.phone,
+        otp:data.otp
+
+      }
+     await axios.post(url,postformData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept':'application/json',
+         // 'Authorization' : `Bearer ${token}`
+        }})
+    .then(res =>{
+      if(res?.data?.success)
+      {
+        
+              let userInfo = res.data;
+              setUserInfo(userInfo.data);
+              AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+              setIsLoading(false);
+      }
+      else{
+        setIsLoading(false);
+        alert(res?.data?.message);
+      }
+
+    })
+    .catch(err => {
+        console.log(err); 
+    });
+
+    }
 
   const logout = () => {
     setIsLoading(true);
@@ -382,6 +537,10 @@ const verify_type = 'id_token'
         Socailloginphone,
         logout,
         signOut,
+        mobilelogin,
+        MobileWithOTPScreen,
+        verifyotpAPI,
+        facebooklogin
       }}>
       {children}
       <Overlay isVisible={isvisible} onBackdropPress={toggleOverlay}>

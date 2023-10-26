@@ -65,6 +65,7 @@
     "react-native-dropdown-picker": "^5.3.0",
     "react-native-dropdownalert": "^4.5.1",
     "react-native-elements": "^3.4.2",
+    "react-native-fbsdk": "^3.0.0",
     "react-native-flatlist-slider": "^1.0.6",
     "react-native-fontawesome": "^7.0.0",
     "react-native-geocoding": "^0.5.0",

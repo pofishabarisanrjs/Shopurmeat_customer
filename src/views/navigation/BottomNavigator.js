@@ -18,7 +18,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import messaging from '@react-native-firebase/messaging';
 import Snackbar from 'react-native-snackbar';
 import { baseUrl } from '../../constants/Constants';
-import { StyleSheet, ToastAndroid, Button, StatusBar} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import MobilePasswordScreen from '../screens/MobilePasswordScreen';
+import MobileWithOTPScreen from '../screens/MobileWithOTPSignIn';
 
 const Tab = createBottomTabNavigator();
 const TOPIC = 'MyNews';
@@ -31,8 +33,8 @@ const BottomNavigator = () => {
   const [cart_list,setcart_list] = useState();
   const [isLoading, setLoading] = useState(true);
 const [notificationLength,setNotificationLength]=useState(notificationNumber)
-  const isFocused = useIsFocused(); 
-  const user_id = userInfo?.id;
+const [SettingData,setSettingData]=useState([])
+const user_id = userInfo?.id;
   const token = userInfo?.auth_token
 
   const requestUserPermission = async () => {
@@ -46,8 +48,22 @@ const [notificationLength,setNotificationLength]=useState(notificationNumber)
   };
   
 
+  const _retrieveData = async () => {
+    try {
+        const value = await AsyncStorage.getItem('AppSettings');
+        if (value !== null) {
+            console.log("settings api ===========>",JSON.parse(value));
+            setSettingData(JSON.parse(value))
+        }
+    } catch (error) {
+  console.log(error)
+    }
+  }
+
+
   
   useEffect(() => {
+    _retrieveData()
     if (requestUserPermission()) {
       /**
        * Returns an FCM token for this device
@@ -362,7 +378,7 @@ console.log("Unread data length:", unreadDataLength);
           <>
             <Tab.Screen
               name="Login"
-              component={AccountScreen}
+              component={SettingData?.find(item => item.key === "LoginType")?.value ==="phone_pass"?MobilePasswordScreen:SettingData?.find(item => item.key === "LoginType")?.value ==="email_pass"?AccountScreen:MobileWithOTPScreen}
               options={{
                 tabBarStyle: { display: "none" },
                 tabBarIcon: ({color}) => (

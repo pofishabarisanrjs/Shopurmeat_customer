@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Shopurmeat</string>
     <string moduleConfig="true" name="CodePushDeploymentKey">6tGTRrPsWFFkhsh8XTPBHu5K6ccUeATxSBZxl</string>
+<string name="facebook_app_id">843703257212322</string>
+<string name="facebook_client_token">848f3b827078de72b3296ab7af57c5bc</string>
+
 </resources>
