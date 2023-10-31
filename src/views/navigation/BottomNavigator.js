@@ -40,7 +40,7 @@ const user_id = userInfo?.id;
   const requestUserPermission = async () => {
     
     const authStatus = await messaging().requestPermission();
-    console.log('Authorization status(authStatus):', authStatus);
+    console.log('Authorization status(authStatus):', authStatus,messaging.AuthorizationStatus.AUTHORIZED,authStatus === messaging.AuthorizationStatus.PROVISIONAL);
     return (
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL
@@ -65,9 +65,7 @@ const user_id = userInfo?.id;
   useEffect(() => {
     _retrieveData()
     if (requestUserPermission()) {
-      /**
-       * Returns an FCM token for this device
-       */
+    
       console.log('sabaros')
       messaging()
         .getToken()
@@ -92,7 +90,7 @@ const user_id = userInfo?.id;
                 "push_token":fcmToken
               }),
             }).then((response)=>{
-              console.log("fcmresponse------->",response)
+              console.log("fcmresponse------->",response?.data)
             }).catch((error)=>{
               console.log(error)
             })

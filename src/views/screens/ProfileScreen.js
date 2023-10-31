@@ -7,6 +7,8 @@ import {AuthContext} from '../../../AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import {  Overlay } from 'react-native-elements';
 import { domainUrl } from '../../constants/Constants';
+import Entypo from 'react-native-vector-icons/Entypo';
+
 const Notification = ({ navigation: { navigate } }) => {
   const navigation = useNavigation();
   const {userInfo, isLoading, logout,signOut} = useContext(AuthContext);
@@ -14,6 +16,9 @@ const Notification = ({ navigation: { navigate } }) => {
   const [data, setdata] = useState(['']);
   const [visible, setVisible] = useState(false);
 
+  {
+    console.log(userInfo)
+  }
   const toggleOverlay = () => {
     setVisible(!visible);
   };
@@ -29,19 +34,19 @@ const Notification = ({ navigation: { navigate } }) => {
     <View style={styles.container}>
       <View style={{width:'100%',alignItems:'center', height:200,backgroundColor:'#f8f9fa',flexDirection:'row',justifyContent:'space-around'}}>
        <View>
-       <Text style={{fontSize:24,fontWeight:'bold',color:'black'}}>{userInfo.name}  </Text>
-      <Text style={{fontSize:16,top:8,color:'#6c757d'}} >(+91){userInfo.phone} </Text>
-      <Text style={{fontSize:16,top:8,color:'#6c757d'}}>{userInfo.email}  </Text>
+       <Text style={{fontSize:24,fontWeight:'bold',color:'black'}}>{userInfo?.name}  </Text>
+      <Text style={{fontSize:16,top:8,color:'#6c757d'}} >(+91){userInfo?.phone} </Text>
+      <Text style={{fontSize:16,top:8,color:'#6c757d'}}>{userInfo?.email}  </Text>
        </View>
-       <View style={{width:100,height:100}}> 
+       <Pressable style={{width:100,height:100}} onPress={()=>navigation.navigate('UserAvatarList')}> 
        <Image 
           style={{ width: '90%', height: 140,bottom:24}}
           source={{
-            uri:`${domainUrl}assets/img/various/avatars/user5.gif`
+            uri:`${domainUrl}assets/img/various/avatars/${userInfo?.avatar}.gif`
           }}
           
         />
-       </View>
+       </Pressable>
       </View>
       <View style={styles.account}>
        <Text style={{top:30,left:26,fontWeight:'bold',color:'black'}} >My Account</Text>
@@ -73,6 +78,16 @@ const Notification = ({ navigation: { navigate } }) => {
        ></Image>
           <Text style={styles.wordtext}>My Orders</Text>
           </TouchableOpacity>
+
+          
+        </View>
+        <View style={styles.word}>
+        <TouchableOpacity style={{bottom:4}} onPress={()=>navigation.navigate('Favourities')}>
+        <Entypo style={{ alignSelf:'center'}} color='#e91e63' name='heart' size={25}></Entypo>
+          <Text style={styles.wordtext}>My Favourites</Text>
+          </TouchableOpacity>
+
+          
         </View>
       </View>
     </View>

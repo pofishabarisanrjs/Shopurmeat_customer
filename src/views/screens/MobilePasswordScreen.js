@@ -1,16 +1,24 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { ScrollView, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View, StyleSheet, Image } from 'react-native';
+import { ScrollView, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View, StyleSheet, Image,Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { AuthContext } from '../../../AuthContext';
 import LottieView from 'lottie-react-native';
 import { domainUrl } from '../../constants/Constants';
 import FacebookLogin from './FaceBookLogin';
 const MobilePasswordScreen = ({ navigation, route }) => {
-    const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
-    const { isLoading, userInfo, mobilelogin, googlelogin, signOut } = useContext(AuthContext);
+    const { isLoading, userInfo, mobilelogin, googlelogin, verifyotpAPI, ResendOTP } = useContext(AuthContext);
     const [errormsg, seterrormsg] = useState('');
     const [errorms, seterrorms] = useState('');
+    const [showOtpFrom, setOtpForm] = useState(false);
+    const [OTPdata, setOTPdata] = useState();
+    const [showResendButton, setShowResendButton] = useState(false);
+    const [timer, setTimer] = useState(30);
+    // const {fromcart} = route.params
+    const [phone, setPhone] = useState('');
+    const [OTP, setOTP] = useState(null);
+    const [errorotpmsg, seterrorotpmsg] = useState('');
+  
     // const {fromcart} = route.params
 
     const [erroremailmsg, seterroremailmsg] = useState('');
@@ -37,14 +45,31 @@ const MobilePasswordScreen = ({ navigation, route }) => {
         console.log('something', errorms)
     }
 
-    const submit = () => {
-        console.log('mobile number and password', email === null && password == null)
+    useEffect(() => {
+        let interval;
+    
+        if (timer > 0) {
+          interval = setInterval(() => {
+            setTimer(timer - 1);
+          }, 1000);
+        } else {
+          setShowResendButton(true);
+        }
+    
+        return () => {
+          clearInterval(interval);
+        };
+      }, [timer]);
 
-        if (email === null && password == null)
+
+    const submit = () => {
+        console.log('mobile number and password', phone === null && password == null)
+
+        if (phone === null && password == null)
             return seterroremailmsg('Mobile Number is required'), seterrormatchpassmsg('Password is required')
-        else if (email == null)
+        else if (phone == null)
             return seterroremailmsg('Mobile number is required ')
-       else if (!emailmatch.test(email))
+       else if (!emailmatch.test(phone))
             return seterrormsg ('Enter your valid Mobile number')
         else if (password == null)
             seterrormatchpassmsg('Password is required')
@@ -52,8 +77,32 @@ const MobilePasswordScreen = ({ navigation, route }) => {
         else if (!passwordmatch.test(password))
         return seterrormatchpassmsg('Password must contain atleast 8 characters')
         else
-        return Validatenav(fromcart),mobilelogin(email, password)
+        return Validatenav(fromcart),mobilelogin(phone, password,(data)=>{
+            if (data?.original?.need_phone_verification ===1 ) 
+            {
+              console.log(data, "data of the required")
+              setOtpForm(true)
+              setOTPdata(data?.original)
+            }
+      
+            else if (data?.original?.need_email_verification === true ) {
+              Alert.alert("Email verification required check your mail")
+            }
+          
+          })
     }
+
+    const Validate = () => {
+        console.log('mobile number and password', OTP === null)
+    
+        if (OTP === null)
+          return seterrorotpmsg('OTP is required ')
+    
+        else
+          return Validatenav(fromcart), verifyotpAPI({ phone: phone, otp: OTP }, (data) => {
+            navigation.navigate('Login')
+          })
+      }
 
     return (
         isLoading ?
@@ -63,6 +112,7 @@ const MobilePasswordScreen = ({ navigation, route }) => {
                 </Image>
             </View>
             :
+            !showOtpFrom ?
 
             <View style={styles.container}>
                 <ScrollView keyboardShouldPersistTaps={'always'}>
@@ -90,7 +140,7 @@ const MobilePasswordScreen = ({ navigation, route }) => {
                         >
                             <TextInput
                                 style={styles.input}
-                                value={email}
+                                value={phone}
                                 placeholder="Enter Mobile number"
                                 onChangeText={text => {
                                     const re = /^[0-9\b]+$/;
@@ -98,15 +148,15 @@ const MobilePasswordScreen = ({ navigation, route }) => {
                                     // if value is not blank, then test the regex
                   
                                     if (text === "" || re.test(text)) {
-                                      setEmail(text);
+                                      setPhone(text);
                                     }
                                 }}
-                                // onChangeText={(e) => setEmail( e.target.value)}
+                                // onChangeText={(e) => setPhone( e.target.value)}
                                 maxLength={12}
                             />
                             <View style={{ bottom: 6 }}>
-                                {/* <Text>{email != null ? (<Text></Text>):(<Text style={{color:'red',textAlign:'center',left:10}}>{errormsg}</Text>) }</Text> */}
-                                <Text>{!emailmatch.test(email) ? (<Text style={{ color: 'red', textAlign: 'center', left: 10 }}>{erroremailmsg}{errormsg}</Text>) : (<Text></Text>)}</Text>
+                                {/* <Text>{phone != null ? (<Text></Text>):(<Text style={{color:'red',textAlign:'center',left:10}}>{errormsg}</Text>) }</Text> */}
+                                <Text>{!emailmatch.test(phone) ? (<Text style={{ color: 'red', textAlign: 'center', left: 10 }}>{erroremailmsg}{errormsg}</Text>) : (<Text></Text>)}</Text>
                             </View>
                             <TextInput
                                 style={styles.input}
@@ -145,8 +195,11 @@ const MobilePasswordScreen = ({ navigation, route }) => {
 
                                 </View>
                             </TouchableOpacity>
-                            <FacebookLogin/>
                         </View>
+                        <View style={{marginTop:40,width:'60%',alignSelf:'center'}}>
+          <FacebookLogin/>
+
+          </View>
                         <View style={styles.body}>
                             <View style={styles.sectionContainer}>
                             </View>
@@ -188,7 +241,96 @@ const MobilePasswordScreen = ({ navigation, route }) => {
                     />
                 </View>
             </View>
+  :
+  <>
+    <View style={styles.head}>
+      <View style={styles.backbutn}>
+        <Icon name="arrow-back-ios" size={28} onPress={navigation.goBack} style={{ left: 30 }} />
+      </View>
+      <View style={{ flexDirection: 'row', height: 155 }}>
+        <View style={{ width: '50%' }}>
+          <Text style={styles.login}>Mobile Verification</Text>
+          <Text style={styles.log}>Enter your OTP </Text>
+        </View>
+        <View style={{ width: '50%' }}>
+          <Image
+            style={{ width: '100%', height: 150, justifyContent: "center", left: 18 }}
+            source={require('../../assets/login.png')}></Image>
+        </View>
+      </View>
+    </View>
 
+    <View style={styles.OTPwrapper}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+
+      >
+        <TextInput
+          style={styles.input}
+          value={phone}
+          placeholder="Enter Mobile number"
+          onChangeText={text => {
+            const re = /^[0-9\b]+$/;
+
+            // if value is not blank, then test the regex
+
+            if (text === "" || re.test(text)) {
+              setPhone(text);
+            }
+          }}
+          // onChangeText={(e) => setPhone( e.target.value)}
+          maxLength={12}
+          editable={false}
+        />
+        <TextInput
+          style={styles.input}
+          value={OTP}
+          placeholder="Enter OTP"
+          onChangeText={text => {
+            setOTP(text);
+          }}
+          // onChangeText={(e) => setPhone( e.target.value)}
+          maxLength={6}
+        />
+        <View style={{ bottom: 6 }}>
+          {/* <Text>{phone != null ? (<Text></Text>):(<Text style={{color:'red',textAlign:'center',left:10}}>{errormsg}</Text>) }</Text> */}
+          <Text>{errorotpmsg !== '' ? (<Text style={{ color: 'red', textAlign: 'center', left: 10, marginBottom: 10 }}>{errorotpmsg}</Text>) : (<Text></Text>)}</Text>
+
+        </View>
+
+      </KeyboardAvoidingView>
+      <TouchableOpacity title="Login" onPress={() => Validate()}>
+
+        <Text style={styles.button}>Verify </Text></TouchableOpacity>
+      {showResendButton ?
+        <TouchableOpacity style={{ color: 'red', textAlign: 'center', left: 10, marginTop: 10 }} onPress={() =>
+          ResendOTP(phone, (data) => {
+            setOtpForm(true)
+            setOTPdata(data)
+            setTimer(30);
+            setShowResendButton(false);
+          })
+        }>
+          <Text style={styles.link}>Resend OTP</Text>
+        </TouchableOpacity>
+        :
+        <Text>Resend OTP in {timer} seconds</Text>
+
+      }
+      {
+        console.log("sdfadsf", OTPdata)
+      }
+      {
+        OTPdata?.show_otp &&
+        <Text>
+
+          {
+            OTPdata?.otp_str
+          }
+        </Text>
+      }
+    </View>
+  </>
 
     );
 };
@@ -259,6 +401,12 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: -20,
     },
+    OTPwrapper: {
+        width: '80%',
+        top: 50,
+        left: 40,
+        height: 570
+      },
 });
 
 export default MobilePasswordScreen

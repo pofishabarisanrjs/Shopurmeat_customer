@@ -17,6 +17,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { baseUrl,domainUrl } from '../../../constants/Constants';
 import AsyncStorage from '@react-native-community/async-storage';
 import MyVerticalSectionList from '../../components/OfferList';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 if (
   Platform.OS === "android" &&
@@ -108,7 +109,7 @@ export default function Hoteldetails(props) {
       .then((json) => {
         AsyncStorage.setItem("restaurant_latitude", json.latitude);
         AsyncStorage.setItem("restuarnt_longitude", json.longitude);
-        console.log(json)
+        console.log("restaurant info methode ------------------->",json)
         setitemdata(json)
         setStoreCoupon(json?.store_coupon)
         console.log("sadfaskdjfhajksd", storeCoupon)
@@ -185,6 +186,44 @@ export default function Hoteldetails(props) {
 
   }
 
+  const favorities = (id) => {
+  
+    console.log(`${baseUrl}/toggle-favorite`,{
+      id,
+      token:
+        userInfo?.auth_token,
+    })
+
+    fetch(`${baseUrl}/toggle-favorite`,
+      {
+        method: 'POST',
+
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id,
+          token:
+            userInfo?.auth_token,
+        }),
+      })
+
+      .then((response) => response.json())
+      .then((json) => {
+        AsyncStorage.setItem("restaurant_latitude", json.latitude);
+        AsyncStorage.setItem("restuarnt_longitude", json.longitude);
+        console.log(json)
+        setitemdata(json)
+        setStoreCoupon(json?.store_coupon)
+        console.log("sadfaskdjfhajksd", storeCoupon)
+
+
+      })
+      .then((itemdata) => JSON.stringify(itemdata))
+      .catch((error) => console.error(error))
+      .finally(() => setLoading(false));
+  }
 
 
 
@@ -560,7 +599,7 @@ export default function Hoteldetails(props) {
   var i = []
   return (
     <View style={{ flex: 1, }}>
-      <View style={{ backgroundColor: 'white', flexDirection: 'row', height: 70, }}>
+      <View style={{ backgroundColor: 'white', flexDirection: 'row', height: 60, }}>
         <Icon name="arrow-back-ios" size={24} onPress={navigation.goBack} style={{ left: 20, top: 25 }} />
         <Text style={{
           fontSize: 18,
@@ -639,14 +678,30 @@ export default function Hoteldetails(props) {
                       <View>
 
                         <Image
-                          style={{ width: 93, height: 78, top: 24, left: 20, borderRadius: 14 }}
+                          style={{ width: 93, height: 93, top: 24, left: 20, borderRadius: 5}}
                           source={{ uri: `${domainUrl}${itemdata.image}` }}></Image>
 
                       </View>
 
                       <View style={styles.content}>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{itemdata.name}</Text>
-                        <Text>{itemdata.operation_hrs}</Text>
+                        
+                        <Text style={{ fontSize: 16, fontWeight: 'bold',left: 5 }}>{itemdata.name}</Text>
+                        <View style={{flexDirection:'row',justifyContent:"space-between",alignItems:'center'}}>
+                        <Text style={{left: 5,marginVertical:10,fontSize:13,width: 110}}>{itemdata.operation_hrs}</Text>
+                        <Pressable style={{borderLeftWidth: 0.5,borderColor: '#5757'}} onPress={()=>{favorities(itemdata?.id)}}>
+                          {
+                            !itemdata?.is_favorited ?
+                            <Text style={{left: 5,marginTop:5,fontSize:13}}>
+                            <Entypo style={{ alignSelf:'center'}}  name='heart' size={15}></Entypo> Set as favorities</Text>  
+                            :
+                            <Text style={{left: 5,marginTop:5,fontSize:13}}>
+                          <Entypo style={{ alignSelf:'center'}}  name='heart' color='#e91e63' size={15}></Entypo> Remove favorites</Text>
+                          }
+                          
+                          
+                          
+                          </Pressable>
+                        </View>
                         <View style={styles.botcont}>
                           <Icon size={15}
                             name='star' color={'orange'} />
@@ -834,7 +889,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     top: 10,
     justifyContent: 'center',
-    left: 10
+    left: 5
   },
   search: {
     width: '90%',

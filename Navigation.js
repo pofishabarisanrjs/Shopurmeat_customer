@@ -35,6 +35,8 @@ import OrderStatus from './src/views/screens/OrderStatus';
 import CancelOrder from './src/views/screens/CancelOrder';
 import Webview from './src/views/screens/Webview';
 import CustomRating from './src/views/components/Rating';
+import Favorities from './src/views/screens/Favorities';
+import UserAvatarList from './src/views/screens/Changeavatar';
 
 const Stack = createStackNavigator();
 
@@ -94,6 +96,9 @@ const App = () => {
         <Stack.Screen name="CancelOrder" component={CancelOrder}/>
         <Stack.Screen name="Webview" component={Webview}/>
         <Stack.Screen name='Rating' component={CustomRating}/>
+        <Stack.Screen name="Favourities" component={Favorities}/>
+        <Stack.Screen name="UserAvatarList" component={UserAvatarList}/>
+
         {userInfo?.auth_token ? 
         (<Stack.Screen name="Cart" component={CartScreen}/>):
         <>

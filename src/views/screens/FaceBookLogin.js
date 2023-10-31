@@ -1,7 +1,8 @@
 import React, { useEffect, useState,useContext,useRef } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, Pressable } from 'react-native';
 import { LoginManager, AccessToken, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
 import {AuthContext} from '../../../AuthContext'
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 
 const FacebookLogin = () => {
   // Function to request user information, including email
@@ -83,7 +84,12 @@ const FacebookLogin = () => {
 
   return (
     <View>
-      <Button title="login with facebook" onPress={fetchUserInfo} />
+      <Pressable onPress={fetchUserInfo}  style={{backgroundColor:'#3b5998',padding:10,flexDirection:'row'}}>
+      <EvilIcons style={{ bottom: 3, left: 3 }} color='#ffffff' name='sc-facebook' size={25}></EvilIcons>
+
+        <Text style={{color:'#fff'}}>Login with Facebook</Text>
+      </Pressable>
+      {/* <Button title="login with facebook" onPress={fetchUserInfo} /> */}
     </View>
   );
 };

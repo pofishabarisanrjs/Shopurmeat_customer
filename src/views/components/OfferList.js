@@ -18,21 +18,22 @@ const MyVerticalSectionList = (props) => {
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
-        data={[storeCoupon]}
+        data={storeCoupon}
         renderItem={({ item }) =>{
             console.log(item)
             {
                if(item.is_active ===1 )
                return (
                 <>
-                <View style={{ width: 250, height: 100, borderColor: 'lightgray',borderWidth:1, margin: 10}}>
-                <View style={{ margin: 10, justifyContent: 'flex-start', alignItems: 'center',flexDirection:'row' }}>
-                    <Icon name='brightness-percent' size={32} color={'orange'}/>
-                  <Text style={{marginLeft:10,color:'red',fontWeight:'bold'}}>{item.code}</Text>
-                </View>
-                <Text style={{fontSize:13,marginHorizontal:12}}>
-                {item.discount} % off up to ₹ on orders above ₹ {item.min_subtotal}
+                <View style={{  borderColor: 'lightgray',borderWidth:1, margin: 10}}>
+                <View style={{ margin: 10, justifyContent: 'flex-start', alignItems: 'center',flexDirection:'row',width:200 }}>
+                    <Icon name='brightness-percent' size={32} color={'red'}/>
+                  {/* <Text style={{marginLeft:10,color:'red',fontWeight:'bold'}}>{item.code}</Text> */}
+                  <Text style={{fontSize:13,marginHorizontal:12}}>
+                  <Text style={{fontWeight:'bold',fontSize:13}}>{item?.discount} % off</Text> upto ₹{item?.min_subtotal} Use <Text style={{color:'red',fontWeight:'bold'}}>{item?.code}</Text> | Above {item?.max_count}
                 </Text>
+                </View>
+                
                 </View>
                
                 </>

@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { AuthContext } from '../../../AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LottieView from 'lottie-react-native';
+import Nearby from '../components/Nearby'
 const HomeScreen = (props) => {
   const { route, navigation } = props
   const [mylocation,setmylocation] = useState("Select address")
@@ -53,7 +54,7 @@ const HomeScreen = (props) => {
       <Image 
       style={style.logo}
       source={require('../../assets/HyFilogo.png')}
-      width="20%"
+      width="40%"
       height="60%"
     />
     {!userinfo.auth_token ? (
@@ -153,8 +154,10 @@ const HomeScreen = (props) => {
       <Blog />
       <View>
       <Curtains />
-      <Nearyou refreshing={updaterefresh}/> 
-
+      {/* <Nearyou refreshing={updaterefresh}/>  */}
+      <View style={{width:'108%',height:'auto',right:20,top:16,marginBottom:30}}>
+<Nearby refreshing={updaterefresh}/>
+</View>
       </View>
      {/* <View style={style.View}>
 
@@ -174,9 +177,9 @@ const style = StyleSheet.create({
   header: {
     justifyContent: 'space-between',
     justifyContent:'center',
-    paddingHorizontal: 20,
+ 
     backgroundColor:'white',
-    height:60,
+    height:70
     // alignItems:'center'
   },
   logo:{

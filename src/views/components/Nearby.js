@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { FlatList, Text, RefreshControl, View, StyleSheet, Image, ImageBackground } from 'react-native';
+import { FlatList, Text, RefreshControl, View, StyleSheet, Image, ImageBackground, Pressable } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -90,6 +90,7 @@ const delivery = ({ updaterefresh }) => {
         .then((result) => {
           // console.log('name',result.length)
           // console.log('loaction',myloc,myloct)
+          console.log('result *********************************',result.length ===0)
           setData(result);
           if (result.length == 0) {
             //   run = 1
@@ -204,9 +205,11 @@ const delivery = ({ updaterefresh }) => {
             </View>
           </SkeletonPlaceholder>
         </View> :
+        
+        data.length != 0 ?
         (<View style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
           {Loading && count == 0 ? <Text style={{ bottom: 40, fontSize: 14, width: '50%', fontFamily: 'FontAwesome5_Solid' }} >          NO SHOPS NEAR YOU</Text> : (
-            <Text style={{ bottom: 40, fontSize: 12, width: '50%', fontFamily: 'FontAwesome5_Solid' }}>           {count} SHOPS NEAR YOU</Text>)}
+            <Text style={{ bottom: 20, fontSize: 12, width: '50%', fontFamily: 'FontAwesome5_Solid' }}>           {count} SHOPS NEAR YOU</Text>)}
 
           <FlatList
             data={data}
@@ -218,6 +221,8 @@ const delivery = ({ updaterefresh }) => {
             }
             keyExtractor={({ item }, index) => item}
             renderItem={({ item }) => {
+
+              console.log(item)
               if (item.is_active === 1)
                 return (
                   (
@@ -302,7 +307,19 @@ const delivery = ({ updaterefresh }) => {
 
         </View>
 
-        )}
+        )
+      :
+      <>
+      <View style={{flex:1,alignSelf:'center'}}>
+        <Text style={{fontWeight:'bold'}}> No restaurant found in this location</Text>
+        <Pressable style={{marginTop:15,alignSelf:'center',padding:10,backgroundColor:'red',borderRadius:30}} onPress={
+          () => navigation.navigate('LocationView')}>
+          <Text style={{color:'#fff'}}>Change Location</Text>
+        </Pressable>
+         </View>
+      </>
+      
+      }
 
     </View>
   );
@@ -375,10 +392,9 @@ const styles = StyleSheet.create({
     width: "95%",
     height: 40,
     // marginTop:8,
-    marginLeft: 10,
     flexDirection: "row",
     alignItems: 'center',
-    justifyContent: "center",
+    justifyContent:"flex-start",
     // flexWrap:1
     fontFamily: 'FontAwesome'
   },
