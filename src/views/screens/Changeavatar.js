@@ -43,6 +43,7 @@ const UserAvatarList = (props) => {
                 console.log(res)
                 if (res?.success) {
                     updateUser()
+                    navigation.goBack()
                 }
             })
             .catch((error) => console.error(error))

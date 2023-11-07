@@ -12,6 +12,8 @@ export const AuthProvider = ({ children, props }) => {
   const [userInfo, setUserInfo] = useState({});
   const [userinfo, setUserinfo] = useState({});
   const [googleuser, setgoogleuser] = useState({});
+  const [facebookuser, setFacebookuser] = useState({});
+
   const [currentUser, setcurrentUser] = useState({});
   const [isvisible, setisVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +39,10 @@ export const AuthProvider = ({ children, props }) => {
     if (!phonematch.test(phone))
       return setphonematcherror('Enter valid number')
     else
-      return Socaillogin(googleuser, phone, toggleOverlay(!isvisible)), toggleOverlay(false)
+      if(facebookuser) 
+      facebooklogin(facebookuser, phone, toggleOverlay(!isvisible)), toggleOverlay(false)
+      else
+      Socaillogin(googleuser, phone, toggleOverlay(!isvisible)), toggleOverlay(false)
   }
 
 
@@ -357,7 +362,7 @@ export const AuthProvider = ({ children, props }) => {
     }
   };
 
-  const facebooklogin = (currentUser, phone = '') => {
+  const facebooklogin = (currentUser, phone) => {
 
     console.log(currentUser)
     setIsLoading(true);
@@ -369,15 +374,18 @@ export const AuthProvider = ({ children, props }) => {
 
 
     axios
-      .post(`${baseUrl}/login?accessToken=${id}&email=${email}&name=${name}&provider=${provider}&verify_type=${verify_type}&phone=${phone}`, {
+      .post(`${baseUrl}/login?accessToken=${id}&email=${email}&name=${name}&provider=${provider}&verify_type=${verify_type}&phone=${phone===undefined? '':phone}`, {
         phone
       })
       .then(res => {
-        console.log('response of socila', res)
+        console.log('response of socila 0------------------------------------------------------------------------------', res)
         let userInfo = res.data;
-        // console.log("hel",userInfo)
+        console.log("hel",userInfo)
         if (userInfo.enter_phone_after_social_login == true)
-          return toggleOverlay(isvisible)
+        {
+          toggleOverlay(isvisible)
+          setFacebookuser(currentUser)
+        } 
         if (userInfo.email_phone_already_used !== true) {
           setUserInfo(userInfo.data);
           AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
@@ -411,6 +419,8 @@ export const AuthProvider = ({ children, props }) => {
 
   //  ------------Social Login---------- //
   const Socaillogin = (currentUser, phone = '') => {
+
+    console.log("current login ------------------------------------------------------------------------------------------------------------------>",currentUser)
     setIsLoading(true);
     const id = currentUser.idToken
     const email = currentUser.user.email
